@@ -19,6 +19,6 @@ spring:
     show-sql: 'true'
   rabbitmq: # Conexão com o RabbitMQ
     host: localhost
-    port: 5672
-    username: rabbitmq
-    password: rabbitmq
+    port: 5673 #5672
+    username: rabbitmq #admin
+    password: rabbitmq #admin
