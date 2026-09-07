@@ -1,6 +1,7 @@
 package com.algaworks.algasensors.temperature.monitoring.infrastructure.rabbitmq;
 
 import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
@@ -23,13 +24,14 @@ public class RabbitMQConfig {
         return QueueBuilder.durable("temperature-monitoring.process-temperature.v1.q").build();
     }
 
+    // Nao declaramos como @Bean porque esta esta sendo criada em outro projeto
     public FanoutExchange exchange() {
         return ExchangeBuilder.fanoutExchange("temperature-processing.temperature-received.v1.e").build();
     }
 
     @Bean
     public Binding binding() {
-
+        return BindingBuilder.bind(queue()).to(exchange());
     }
 
 }
