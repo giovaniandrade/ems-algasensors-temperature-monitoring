@@ -19,6 +19,7 @@ public class RabbitMQConfig {
     public static final String QUEUE = "temperature-monitoring.process-temperature.v1.q";
 
     // Necessário para desserializar os parametros passados como classes
+    @Bean
     public Jackson2JsonMessageConverter jackson2JsonMessageConverter(ObjectMapper objectMapper) {
         return new Jackson2JsonMessageConverter(objectMapper);
     }

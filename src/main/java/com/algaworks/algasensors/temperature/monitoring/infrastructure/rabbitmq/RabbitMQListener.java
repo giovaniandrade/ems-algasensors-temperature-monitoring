@@ -31,13 +31,15 @@ public class RabbitMQListener {
 
         // Logando:
 
+        /*
         TSID sensorId = temperatureLogData.getSensorId();
         Double temperature = temperatureLogData.getValue();
         log.info("Temperatue updated: SensorId {} Temp {}", sensorId, temperature);
         log.info("Headers: {}", headers);
+        */
 
 
-        // temperatureMonitoringService.processTemperatureReading(temperatureLogData);
+        temperatureMonitoringService.processTemperatureReading(temperatureLogData);
 
         Thread.sleep(Duration.ofSeconds(10));
     }
