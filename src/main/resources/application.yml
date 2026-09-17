@@ -4,8 +4,8 @@ server:
 spring:
   application.name: temperature-monitoring
   datasource:
-    username: sa
-    url: jdbc:h2:file:~/algasensors-temperature-monitoring-db;CASE_INSENSITIVE_IDENTIFIERS=TRUE;
+    username: sa #AUTO_SERVER=TRUE permite multiplas conexões no mesmo banco (quando sobre 2 instancias)
+    url: jdbc:h2:file:~/algasensors-temperature-monitoring-db;CASE_INSENSITIVE_IDENTIFIERS=TRUE;AUTO_SERVER=TRUE
     driverClassName: org.h2.Driver
     password: '123'
   h2:
@@ -16,9 +16,12 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
-    show-sql: 'true'
+    show-sql: 'false' # Exibe ou nao os logs de SQL no console do Intellij
   rabbitmq: # Conexão com o RabbitMQ
     host: localhost
     port: 5673 #5672
     username: rabbitmq #admin
     password: rabbitmq #admin
+    listener:
+      simple:
+        prefetch: 4 # Limita a qtd máxima de mensagens que o consumidor pode buscar para processar por vez (default 250)

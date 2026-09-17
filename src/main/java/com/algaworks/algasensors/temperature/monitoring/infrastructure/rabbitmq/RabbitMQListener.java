@@ -24,7 +24,9 @@ public class RabbitMQListener {
     private final TemperatureMonitoringService temperatureMonitoringService;
 
     // @Payload para que ele serialize o payload da mensagem pra dentro desse objeto
-    @RabbitListener(queues = QUEUE)
+    // concurrency = min-max de Threads que vao ser processadas por vez, se nao configurar processa uma a uma
+    // O concurrency depende do Prefetch, porque ele limita a quantidade mensagens buscadas por vez
+    @RabbitListener(queues = QUEUE, concurrency = "2-3")
     @SneakyThrows
     public void handle(@Payload TemperatureLogData temperatureLogData,
                        @Headers Map<String, Object> headers) {
