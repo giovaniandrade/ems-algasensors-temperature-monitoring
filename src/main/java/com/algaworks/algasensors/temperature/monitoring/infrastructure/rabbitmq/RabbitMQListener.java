@@ -2,7 +2,6 @@ package com.algaworks.algasensors.temperature.monitoring.infrastructure.rabbitmq
 
 import com.algaworks.algasensors.temperature.monitoring.api.model.TemperatureLogData;
 import com.algaworks.algasensors.temperature.monitoring.domain.service.TemperatureMonitoringService;
-import io.hypersistence.tsid.TSID;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,8 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.Map;
 
-import static com.algaworks.algasensors.temperature.monitoring.infrastructure.rabbitmq.RabbitMQConfig.QUEUE;
+import static com.algaworks.algasensors.temperature.monitoring.infrastructure.rabbitmq.RabbitMQConfig.QUEUE_ALERTING;
+import static com.algaworks.algasensors.temperature.monitoring.infrastructure.rabbitmq.RabbitMQConfig.QUEUE_PROCESS_TEMPERATURE;
 
 @Slf4j
 @Component
@@ -26,9 +26,9 @@ public class RabbitMQListener {
     // @Payload para que ele serialize o payload da mensagem pra dentro desse objeto
     // concurrency = min-max de Threads que vao ser processadas por vez, se nao configurar processa uma a uma
     // O concurrency depende do Prefetch, porque ele limita a quantidade mensagens buscadas por vez
-    @RabbitListener(queues = QUEUE, concurrency = "2-3")
+    @RabbitListener(queues = QUEUE_PROCESS_TEMPERATURE, concurrency = "2-3")
     @SneakyThrows
-    public void handle(@Payload TemperatureLogData temperatureLogData,
+    public void handleProcessingTemperature(@Payload TemperatureLogData temperatureLogData,
                        @Headers Map<String, Object> headers) {
 
         // Logando:
@@ -43,6 +43,15 @@ public class RabbitMQListener {
 
         temperatureMonitoringService.processTemperatureReading(temperatureLogData);
 
+        Thread.sleep(Duration.ofSeconds(10));
+    }
+
+    @RabbitListener(queues = QUEUE_ALERTING, concurrency = "2-3")
+    @SneakyThrows
+    public void handleAlerting(@Payload TemperatureLogData temperatureLogData,
+                       @Headers Map<String, Object> headers) {
+
+        log.info("Alerting: SensorId {} Temperatura {}", temperatureLogData.getSensorId(), temperatureLogData.getValue());
         Thread.sleep(Duration.ofSeconds(10));
     }
 
