@@ -1,6 +1,7 @@
 package com.algaworks.algasensors.temperature.monitoring.infrastructure.rabbitmq;
 
 import com.algaworks.algasensors.temperature.monitoring.api.model.TemperatureLogData;
+import com.algaworks.algasensors.temperature.monitoring.domain.service.SensorAlertService;
 import com.algaworks.algasensors.temperature.monitoring.domain.service.TemperatureMonitoringService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -22,6 +23,7 @@ import static com.algaworks.algasensors.temperature.monitoring.infrastructure.ra
 public class RabbitMQListener {
 
     private final TemperatureMonitoringService temperatureMonitoringService;
+    private final SensorAlertService sensorAlertService;
 
     // @Payload para que ele serialize o payload da mensagem pra dentro desse objeto
     // concurrency = min-max de Threads que vao ser processadas por vez, se nao configurar processa uma a uma
@@ -51,7 +53,8 @@ public class RabbitMQListener {
     public void handleAlerting(@Payload TemperatureLogData temperatureLogData,
                        @Headers Map<String, Object> headers) {
 
-        log.info("Alerting: SensorId {} Temperatura {}", temperatureLogData.getSensorId(), temperatureLogData.getValue());
+//        log.info("Alerting: SensorId {} Temperatura {}", temperatureLogData.getSensorId(), temperatureLogData.getValue());
+        sensorAlertService.handleAlert(temperatureLogData);
         Thread.sleep(Duration.ofSeconds(10));
     }
 
